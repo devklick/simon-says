@@ -11,7 +11,10 @@ This is a simple implementation of the classic Simon Says memory game, where the
 
 ## Working with the code
 
-Ensure you have Rust installed on your machine. If not, follow the installation guide at: https://www.rust-lang.org/tools/install
+You'll need the following dependencies:
+- [Node.js](https://nodejs.org/en) (perhaps use [nvm](https://github.com/nvm-sh/nvm) to manage your Node.js installation)
+- [Gjs](https://gjs.guide/guides/gtk/3/03-installing.html#installing-gjs)
+- A Linux environment
 
 Clone the repository:
 ```
@@ -19,8 +22,9 @@ git clone https://github.com/devklick/simon-says.git
 cd simon-says
 ```
 
-Run the project:
+Install dependencies and run the project:
 ```
+npm install
 npm start
 ```
 
