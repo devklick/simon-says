@@ -21,11 +21,11 @@ cd simon-says
 
 Run the project:
 ```
-cargo run
+npm start
 ```
 
 ## Future Enhancements
-- Build and release
+- Build and release (flatpak?)
 - Add difficulty levels (e.g., slow, medium, fast).
 - Add sound effects
 - Improve visuals
