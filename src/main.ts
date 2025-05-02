@@ -15,10 +15,17 @@ import styles from "./styles.css?inline";
 import Game from "./Game";
 import GameButton from "./GameButton";
 
+Adw.init();
+
 const app = new Adw.Application({
-  applicationId: "com.github.jumplink.gjs.adw-1-hello",
+  applicationId: "com.devklick.simon-says",
   flags: Gio.ApplicationFlags.FLAGS_NONE,
 });
+
+const menu = new Gio.Menu();
+menu.append("Thing", "do-thing");
+menu.append("Other Thing", "do-other-thing");
+app.set_menubar(menu);
 
 const initStyles = () => {
   const cssProvider = new Gtk.CssProvider();
@@ -53,6 +60,7 @@ const buildButtonWidget = (button: GameButton) => {
     width_request: 80,
     height_request: 80,
     opacity: 0.5,
+    name: `game-button-${button.color}`,
   });
 };
 
@@ -92,34 +100,38 @@ const buildGameButtons = (game: Game): Array<Gtk.Button> => {
   return widgets;
 };
 
-const buildLayout = (widgets: Array<Array<Gtk.Widget>>): Gtk.Box => {
+const buildContent = (widgets: Array<Array<Gtk.Widget>>): Gtk.Box => {
   const grid = new Gtk.Box({
     orientation: Gtk.Orientation.VERTICAL,
     valign: Gtk.Align.CENTER,
-    spacing: 12,
     marginTop: 20,
     marginBottom: 20,
     marginStart: 20,
     marginEnd: 20,
+    spacing: 12,
+    name: "content",
   });
 
-  for (const widgetsInRow of widgets) {
+  for (const [index, widgetsInRow] of widgets.entries()) {
     const row = new Gtk.Box({
       orientation: Gtk.Orientation.HORIZONTAL,
       halign: Gtk.Align.CENTER,
       spacing: 12,
       homogeneous: false,
+      name: `content-hbox-${index}`,
     });
+
     for (const item of widgetsInRow) {
       row.append(item);
     }
+
     grid.append(row);
   }
   return grid;
 };
 
 const buildStartButton = (game: Game) => {
-  const button = new Gtk.Button({ label: "Start" });
+  const button = new Gtk.Button({ label: "Start", name: "start-button" });
 
   // Start (or restart) the game when the button is pressed
   button.connect("clicked", () => {
@@ -137,35 +149,65 @@ const buildStartButton = (game: Game) => {
 };
 
 const buildScoreLabel = (game: Game) => {
-  const label = new Gtk.Label({ label: "Score: 0" });
+  const label = new Gtk.Label({ label: "Score: 0", name: "score-label" });
+
   game.score.subscribe((score) => {
     label.set_label(`Score: ${score}`);
   });
+
   return label;
+};
+
+const buildHeaderBar = (window: Adw.ApplicationWindow) => {
+  return new Adw.HeaderBar({
+    title_widget: new Gtk.Label({
+      label: "Simon",
+      name: "header-title",
+    }),
+    name: "header",
+  });
+};
+
+const buildLayout = ({
+  header,
+  content,
+}: {
+  header: Adw.HeaderBar;
+  content: Gtk.Box;
+}) => {
+  const layout = new Gtk.Box({
+    orientation: Gtk.Orientation.VERTICAL,
+  });
+  layout.append(header);
+  layout.append(content);
+  return layout;
 };
 
 const onActivate = (app: Adw.Application) => {
   initStyles();
+
+  const window = new Adw.ApplicationWindow({
+    application: app,
+    title: "Simon",
+  });
 
   const game = buildGame();
   const buttons = buildGameButtons(game);
   const startButton = buildStartButton(game);
   const scoreLabel = buildScoreLabel(game);
 
-  const layout = buildLayout([
-    [buttons[0], buttons[1]],
-    [buttons[2], buttons[3]],
-    [scoreLabel],
-    [startButton],
-  ]);
-
-  const window = new Gtk.ApplicationWindow({
-    application: app,
-    title: "Simon",
+  const layout = buildLayout({
+    header: buildHeaderBar(window),
+    content: buildContent([
+      [buttons[0], buttons[1]],
+      [buttons[2], buttons[3]],
+      [scoreLabel],
+      [startButton],
+    ]),
   });
 
   window.connect("close-request", app.quit);
-  window.set_child(layout);
+  window.set_content(layout);
   window.present();
 };
 
