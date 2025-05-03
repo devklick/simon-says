@@ -7,19 +7,37 @@ export type GameButtonStatus =
   | "flash-correct"
   | "flash-incorrect";
 
-export type ButtonColor = "red" | "blue" | "green" | "purple";
+export const ButtonColors = {
+  red: "red",
+  blue: "blue",
+  green: "green",
+  purple: "purple",
+} as const;
+
+export const AllButtonColors = Object.values(
+  ButtonColors
+) as ReadonlyArray<ButtonColor>;
+
+export type ButtonColor = (typeof ButtonColors)[keyof typeof ButtonColors];
 
 interface CoreGameButtonParams {
   color: ButtonColor;
 }
 
 class GameButton {
-  color: ButtonColor;
-  status: Observable<GameButtonStatus>;
+  private readonly _color: ButtonColor;
+  private readonly _status = new Observable<GameButtonStatus>("idle");
+
+  public get color() {
+    return this._color;
+  }
+
+  public get status() {
+    return this._status;
+  }
 
   constructor({ color }: CoreGameButtonParams) {
-    this.color = color;
-    this.status = new Observable<GameButtonStatus>("idle");
+    this._color = color;
   }
 
   public flash(

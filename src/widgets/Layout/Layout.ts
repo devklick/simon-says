@@ -21,7 +21,6 @@ export default class Layout extends Gtk.Box {
     super({
       orientation: Gtk.Orientation.VERTICAL,
     });
-    this.append(header);
 
     const content = new Gtk.Box({
       orientation: Gtk.Orientation.VERTICAL,
@@ -36,6 +35,7 @@ export default class Layout extends Gtk.Box {
     content.append(infoPanel);
     content.append(startButton);
 
+    this.append(header);
     this.append(content);
   }
 }

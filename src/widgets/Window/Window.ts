@@ -39,7 +39,7 @@ export default class Window extends Adw.ApplicationWindow {
     TODO: Revisit these helper functions
   */
 
-  private buildGameButtonGrid(game: CoreGame): GameButtonGrid {
+  private buildGameButtonGrid(game: Readonly<CoreGame>): GameButtonGrid {
     const buttonWidgets: Array<GameButton> = [];
 
     for (const [i, button] of game.buttons.entries()) {
@@ -75,13 +75,13 @@ export default class Window extends Adw.ApplicationWindow {
     return new GameButtonGrid({ buttons: buttonWidgets });
   }
 
-  private buildInfoPanel(game: CoreGame): InfoPanel {
+  private buildInfoPanel(game: Readonly<CoreGame>): InfoPanel {
     const infoPanel = new InfoPanel();
     game.score.subscribe((score) => infoPanel.updateScore(score));
     return infoPanel;
   }
 
-  private buildStartButton(game: CoreGame): Gtk.Button {
+  private buildStartButton(game: Readonly<CoreGame>): Gtk.Button {
     const button = new Gtk.Button({ label: "Start" });
 
     // Start (or restart) the game when the button is pressed

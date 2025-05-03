@@ -9,7 +9,7 @@ export type GameStatus =
   | "game-over";
 
 interface CoreGameParams {
-  buttons: Array<CoreGameButton>;
+  buttons: ReadonlyArray<Readonly<CoreGameButton>>;
 }
 
 class Game {
@@ -41,23 +41,20 @@ class Game {
    * The generated sequence that the player must repeat.
    * These values refer to the index of the buttons.
    */
-  private readonly _sequence: Array<number>;
+  private readonly _sequence: Array<number> = [];
   /**
    * The sequence that the player has clicked when repeating the sequence.
    * These values refer to the index of the buttons that the player has clicked.
    */
-  private readonly _playerInput: Array<number>;
+  private readonly _playerInput: Array<number> = [];
   /**
    * The index of the button which is currently being flashed to the user while
    * the sequence is playing.
    */
-  private _currentIndex: number;
+  private _currentIndex: number = 0;
 
   constructor({ buttons }: CoreGameParams) {
     this.buttons = buttons;
-    this._sequence = [];
-    this._playerInput = [];
-    this._currentIndex = 0;
   }
 
   /**

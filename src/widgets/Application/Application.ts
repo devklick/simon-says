@@ -7,7 +7,7 @@ import { exit } from "@girs/gjs/system";
 
 import Window from "../Window";
 import CoreGame from "../../core/CoreGame";
-import CoreGameButton from "../../core/CoreGameButton";
+import CoreGameButton, { AllButtonColors } from "../../core/CoreGameButton";
 
 import styles from "../../styles.css?inline";
 
@@ -22,29 +22,21 @@ export default class Application extends Adw.Application {
   }
 
   private _window: Window | null = null;
-  private _game: CoreGame | null = null;
+  public readonly game: Readonly<CoreGame>;
 
   private get window(): Window {
     this._window ??= new Window(this);
     return this._window;
   }
 
-  public get game(): CoreGame {
-    this._game ??= new CoreGame({
-      buttons: [
-        new CoreGameButton({ color: "red" }),
-        new CoreGameButton({ color: "blue" }),
-        new CoreGameButton({ color: "green" }),
-        new CoreGameButton({ color: "purple" }),
-      ],
-    });
-    return this._game;
-  }
-
   constructor() {
     super({
       applicationId: APPLICATION_ID,
       flags: Gio.ApplicationFlags.FLAGS_NONE,
+    });
+
+    this.game = new CoreGame({
+      buttons: AllButtonColors.map((color) => new CoreGameButton({ color })),
     });
   }
 

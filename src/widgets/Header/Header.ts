@@ -11,7 +11,7 @@ export default class Header extends Adw.Bin {
     GObject.registerClass({ GTypeName: "Header" }, this);
   }
 
-  private _adwHeader: Adw.HeaderBar;
+  private readonly _adwHeader: Adw.HeaderBar;
 
   constructor({ appName }: HeaderParams) {
     super();

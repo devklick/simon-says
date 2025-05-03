@@ -6,7 +6,7 @@ export default class InfoPanel extends Gtk.Box {
     GObject.registerClass({ GTypeName: "InfoPanel" }, this);
   }
 
-  private _scoreLabel: Gtk.Label;
+  private readonly _scoreLabel: Gtk.Label;
 
   constructor() {
     super({ halign: Gtk.Align.CENTER });

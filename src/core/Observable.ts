@@ -9,7 +9,7 @@ type Predicate<T> = (value: T) => boolean;
 
 class Observable<T> {
   private _value: T;
-  private subscriptions: Array<{
+  private readonly subscriptions: Array<{
     predicate?: Predicate<T>;
     action: Action<T>;
   }>;
