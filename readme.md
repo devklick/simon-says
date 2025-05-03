@@ -22,9 +22,10 @@ git clone https://github.com/devklick/simon-says.git
 cd simon-says
 ```
 
-Install dependencies and run the project:
+Install dependencies, compile schemas, and run the project:
 ```
 npm install
+npm run compile-schemas
 npm start
 ```
 
