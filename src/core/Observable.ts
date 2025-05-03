@@ -1,6 +1,12 @@
 type Action<T> = (value: T) => void;
 type Predicate<T> = (value: T) => boolean;
 
+/*
+  The Observable class could probably be replaced by using Gtk property bindings. 
+  I haven't delved into these yet, and I quite like this way of doing things, 
+  so I'm happy with this approach for now.
+*/
+
 class Observable<T> {
   private _value: T;
   private subscriptions: Array<{

@@ -9,11 +9,15 @@ export type GameButtonStatus =
 
 type ButtonColor = "red" | "blue" | "green" | "yellow";
 
+interface CoreGameButtonParams {
+  color: ButtonColor;
+}
+
 class GameButton {
   color: ButtonColor;
   status: Observable<GameButtonStatus>;
 
-  constructor(color: ButtonColor) {
+  constructor({ color }: CoreGameButtonParams) {
     this.color = color;
     this.status = new Observable<GameButtonStatus>("idle");
   }

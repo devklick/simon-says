@@ -1,12 +1,16 @@
 import GLib from "@girs/glib-2.0";
 import Observable from "./Observable";
-import GameButton from "./GameButton";
+import CoreGameButton from "./CoreGameButton";
 
 export type GameStatus =
   | "setup"
   | "playing-sequence"
   | "waiting-for-user"
   | "game-over";
+
+interface CoreGameParams {
+  buttons: Array<CoreGameButton>;
+}
 
 class Game {
   /**
@@ -22,7 +26,7 @@ class Game {
    * The game input buttons, i.e. color buttons, for the user to click when
    * repeating the generated sequence.
    */
-  public buttons: Array<GameButton>;
+  public buttons: ReadonlyArray<Readonly<CoreGameButton>>;
 
   /**
    * The generated sequence that the player must repeat.
@@ -40,7 +44,7 @@ class Game {
    */
   private _currentIndex: number;
 
-  constructor(buttons: Array<GameButton>) {
+  constructor({ buttons }: CoreGameParams) {
     this.score = new Observable<number>(0);
     this.status = new Observable<GameStatus>("setup");
 
@@ -68,7 +72,7 @@ class Game {
    * to be next in the sequence.
    * @param buttonIndex The index of the button clicked by the player
    */
-  handleButtonClick(buttonIndex: number) {
+  public handleButtonClick(buttonIndex: number) {
     if (this.status.value !== "waiting-for-user") {
       return;
     }
@@ -108,7 +112,7 @@ class Game {
   /**
    * Plays the current sequence of colors to the player.
    */
-  emitSequence() {
+  private emitSequence() {
     this.status.value = "playing-sequence";
 
     // Add a small delay to give a gap between the player
