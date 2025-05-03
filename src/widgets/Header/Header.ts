@@ -14,9 +14,9 @@ export default class Header extends Adw.Bin {
   private readonly _adwHeader: Adw.HeaderBar;
 
   constructor({ appName }: HeaderParams) {
-    super();
-    const titleWidget = new Gtk.Label({ label: appName });
-    this._adwHeader = new Adw.HeaderBar({ titleWidget });
+    super({ name: "header-wrapper" });
+    const titleWidget = new Gtk.Label({ label: appName, name: "title" });
+    this._adwHeader = new Adw.HeaderBar({ titleWidget, name: "header" });
     this.set_child(this._adwHeader);
   }
 }

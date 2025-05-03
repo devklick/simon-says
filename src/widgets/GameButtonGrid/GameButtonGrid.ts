@@ -30,6 +30,7 @@ export default class GameButtonGrid extends Gtk.Box {
       halign: Gtk.Align.CENTER,
       spacing: 12,
       homogeneous: true,
+      name: "game-button-row",
     });
 
     for (const item of items) {

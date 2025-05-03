@@ -20,6 +20,7 @@ export default class Layout extends Gtk.Box {
   constructor({ header, buttonGrid, infoPanel, startButton }: LayoutParams) {
     super({
       orientation: Gtk.Orientation.VERTICAL,
+      name: "layout",
     });
 
     const content = new Gtk.Box({
@@ -30,7 +31,9 @@ export default class Layout extends Gtk.Box {
       marginStart: 20,
       marginEnd: 20,
       spacing: 20,
+      name: "content",
     });
+
     content.append(buttonGrid);
     content.append(infoPanel);
     content.append(startButton);

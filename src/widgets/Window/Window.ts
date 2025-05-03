@@ -21,6 +21,7 @@ export default class Window extends Adw.ApplicationWindow {
       defaultHeight: 351,
       defaultWidth: 212,
       resizable: false,
+      name: "main-window",
     });
 
     this.set_content(
@@ -82,7 +83,7 @@ export default class Window extends Adw.ApplicationWindow {
   }
 
   private buildStartButton(game: Readonly<CoreGame>): Gtk.Button {
-    const button = new Gtk.Button({ label: "Start" });
+    const button = new Gtk.Button({ label: "Start", name: "start-button" });
 
     // Start (or restart) the game when the button is pressed
     button.connect("clicked", () => {

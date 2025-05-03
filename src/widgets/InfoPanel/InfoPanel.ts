@@ -9,8 +9,11 @@ export default class InfoPanel extends Gtk.Box {
   private readonly _scoreLabel: Gtk.Label;
 
   constructor() {
-    super({ halign: Gtk.Align.CENTER });
-    this._scoreLabel = new Gtk.Label({ label: "Score: 0" });
+    super({ halign: Gtk.Align.CENTER, name: "info-panel" });
+    this._scoreLabel = new Gtk.Label({
+      label: "Score: 0",
+      name: "score-label",
+    });
     this.append(this._scoreLabel);
   }
 
