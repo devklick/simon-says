@@ -35,7 +35,7 @@ export default class Application extends Adw.Application {
         new CoreGameButton({ color: "red" }),
         new CoreGameButton({ color: "blue" }),
         new CoreGameButton({ color: "green" }),
-        new CoreGameButton({ color: "yellow" }),
+        new CoreGameButton({ color: "purple" }),
       ],
     });
     return this._game;

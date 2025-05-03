@@ -13,31 +13,40 @@ interface CoreGameParams {
 }
 
 class Game {
+  private readonly _score = new Observable<number>(0);
+  private readonly _status = new Observable<GameStatus>("setup");
+
   /**
    * The score that the player has accumulated during the current round.
    * Gets reset on game-over, or if player reset's the game mid-round.
    */
-  public score: Observable<number>;
+  public get score() {
+    return this._score;
+  }
+
   /**
    * The current status of this game round.
    */
-  public status: Observable<GameStatus>;
+  public get status() {
+    return this._status;
+  }
+
   /**
    * The game input buttons, i.e. color buttons, for the user to click when
    * repeating the generated sequence.
    */
-  public buttons: ReadonlyArray<Readonly<CoreGameButton>>;
+  public readonly buttons: ReadonlyArray<Readonly<CoreGameButton>>;
 
   /**
    * The generated sequence that the player must repeat.
    * These values refer to the index of the buttons.
    */
-  private _sequence: Array<number>;
+  private readonly _sequence: Array<number>;
   /**
    * The sequence that the player has clicked when repeating the sequence.
    * These values refer to the index of the buttons that the player has clicked.
    */
-  private _playerInput: Array<number>;
+  private readonly _playerInput: Array<number>;
   /**
    * The index of the button which is currently being flashed to the user while
    * the sequence is playing.
@@ -45,9 +54,6 @@ class Game {
   private _currentIndex: number;
 
   constructor({ buttons }: CoreGameParams) {
-    this.score = new Observable<number>(0);
-    this.status = new Observable<GameStatus>("setup");
-
     this.buttons = buttons;
     this._sequence = [];
     this._playerInput = [];

@@ -7,7 +7,7 @@ export type GameButtonStatus =
   | "flash-correct"
   | "flash-incorrect";
 
-type ButtonColor = "red" | "blue" | "green" | "yellow";
+export type ButtonColor = "red" | "blue" | "green" | "purple";
 
 interface CoreGameButtonParams {
   color: ButtonColor;
