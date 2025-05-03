@@ -3,6 +3,7 @@ import GObject from "@girs/gobject-2.0";
 import Gio from "@girs/gio-2.0";
 import Gtk from "@girs/gtk-4.0";
 import Gdk from "@girs/gdk-4.0";
+import Gst from "@girs/gst-1.0";
 import { exit } from "@girs/gjs/system";
 
 import Window from "../Window";
@@ -18,6 +19,7 @@ export default class Application extends Adw.Application {
 
   static {
     Adw.init();
+    Gst.init(null);
     GObject.registerClass({ GTypeName: "Application" }, this);
   }
 

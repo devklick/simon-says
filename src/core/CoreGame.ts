@@ -87,8 +87,16 @@ class Game {
     // Loop over each item in the players input so far, checking if it's correct
     for (const [i, input] of this._playerInput.entries()) {
       const correct = input === this._sequence[i];
-      // Flash the button when clicked
-      button.flash(correct ? "flash-correct" : "flash-incorrect");
+      // Temp fix to only flash the button if the last in the sequence is correct.
+      // This is a hacky solution because we're looping over each item in the _playerInput array
+      // every time the player pressed a button. The long term solution is to store
+      // something to tell us which position in the sequence this button press relates to,
+      // so we only need to check a single input, rather than checking all (we know previous)
+      // inputs are correct or we wouldnt get here...
+      if (i === this._playerInput.length - 1) {
+        // Flash the button when clicked
+        button.flash(correct ? "flash-correct" : "flash-incorrect");
+      }
 
       // If the input was wrong, it's game over.
       if (!correct) {

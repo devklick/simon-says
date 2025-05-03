@@ -50,24 +50,13 @@ export default class Window extends Adw.ApplicationWindow {
       // When the button status indicates a flash, temporarily decrease the opacity
       button.status.subscribeWhen(
         (status) => status.startsWith("flash"),
-        (status) => {
-          widget.set_opacity(1);
-          // depending on the type of flash, display the appropriate icon
-          if (status === "flash-correct") {
-            widget.set_icon_name("dialog-ok-symbolic");
-          } else if (status === "flash-incorrect") {
-            widget.set_icon_name("process-stop");
-          }
-        }
+        (status) => widget.startFlash(status)
       );
 
       // reset the opacity to half and clear the button icon when the button does back to idle
       button.status.subscribeWhen(
         (status) => status === "idle",
-        () => {
-          widget.set_opacity(0.5);
-          widget.set_icon_name("");
-        }
+        () => widget.endFlash()
       );
 
       buttonWidgets.push(widget);

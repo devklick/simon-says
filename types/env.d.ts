@@ -24,3 +24,8 @@ declare module "*.css?inline" {
   const style: string;
   export default style;
 }
+
+declare module "*.mp3" {
+  const src: string;
+  export default src;
+}
