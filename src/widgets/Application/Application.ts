@@ -11,6 +11,7 @@ import CoreGame from "../../core/CoreGame";
 import CoreGameButton, { AllButtonColors } from "../../core/CoreGameButton";
 
 import styles from "../../styles.css?inline";
+import SettingsWindow from "../SettingsWindow/SettingsWindow";
 
 const APPLICATION_ID = "com.devklick.simon-says";
 
@@ -24,11 +25,35 @@ export default class Application extends Adw.Application {
   }
 
   private _window: Window | null = null;
+  private _settingsWindow: SettingsWindow | null = null;
+  private _appSettings: Gio.Settings | null = null;
+
   public readonly game: Readonly<CoreGame>;
 
+  private get appSettings() {
+    this._appSettings ??= new Gio.Settings({
+      schemaId: `${this.id}.settings`,
+    });
+    return this._appSettings;
+  }
+
   private get window(): Window {
-    this._window ??= new Window(this);
+    this._window ??= new Window({
+      application: this,
+      settings: this.appSettings,
+    });
     return this._window;
+  }
+  private get settingsWindow(): SettingsWindow {
+    this._settingsWindow ??= new SettingsWindow({
+      application: this,
+      settings: this.appSettings,
+    });
+    return this._settingsWindow;
+  }
+
+  public get id(): typeof APPLICATION_ID {
+    return APPLICATION_ID;
   }
 
   constructor() {
@@ -40,12 +65,17 @@ export default class Application extends Adw.Application {
     this.game = new CoreGame({
       buttons: AllButtonColors.map((color) => new CoreGameButton({ color })),
     });
+
+    const openSettings = new Gio.SimpleAction({ name: "settings" });
+    openSettings.connect("activate", () => this.settingsWindow.present());
+    this.add_action(openSettings);
   }
 
   override vfunc_activate(): void {
     super.vfunc_activate();
     this.initStyles();
     this.window.present();
+    this.window.connect("close-request", () => this.quit());
   }
 
   private initStyles(): void {

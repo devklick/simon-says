@@ -1,6 +1,7 @@
 import Adw from "@girs/adw-1";
 import GObject from "@girs/gobject-2.0";
 import Gtk from "@girs/gtk-4.0";
+import Gio from "@girs/gio-2.0";
 
 import Application from "../Application";
 import Header from "../Header";
@@ -10,12 +11,17 @@ import GameButtonGrid from "../GameButtonGrid";
 import GameButton from "../GameButton";
 import InfoPanel from "../InfoPanel";
 
+interface WindowParams {
+  application: Application;
+  settings: Gio.Settings;
+}
+
 export default class Window extends Adw.ApplicationWindow {
   static {
     GObject.registerClass({ GTypeName: "Window" }, this);
   }
 
-  constructor(application: Application) {
+  constructor({ application, settings }: WindowParams) {
     super({
       application,
       defaultHeight: 351,
@@ -26,8 +32,11 @@ export default class Window extends Adw.ApplicationWindow {
 
     this.set_content(
       new Layout({
-        header: new Header({ appName: application.name }),
-        buttonGrid: this.buildGameButtonGrid(application.game),
+        header: new Header({
+          appName: application.name,
+          actionMap: application,
+        }),
+        buttonGrid: this.buildGameButtonGrid(application.game, settings),
         infoPanel: this.buildInfoPanel(application.game),
         startButton: this.buildStartButton(application.game),
       })
@@ -40,11 +49,14 @@ export default class Window extends Adw.ApplicationWindow {
     TODO: Revisit these helper functions
   */
 
-  private buildGameButtonGrid(game: Readonly<CoreGame>): GameButtonGrid {
+  private buildGameButtonGrid(
+    game: Readonly<CoreGame>,
+    settings: Gio.Settings
+  ): GameButtonGrid {
     const buttonWidgets: Array<GameButton> = [];
 
     for (const [i, button] of game.buttons.entries()) {
-      const widget = new GameButton({ color: button.color });
+      const widget = new GameButton({ color: button.color, settings });
       widget.connect("clicked", () => game.handleButtonClick(i));
 
       // When the button status indicates a flash, temporarily decrease the opacity

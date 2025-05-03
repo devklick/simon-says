@@ -13,3 +13,5 @@ insert_final_newline = false
 
 [*.{js,ts}]
 indent_size = 2
+
+./compiled-schemas
