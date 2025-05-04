@@ -17,7 +17,9 @@ export default class GameButton extends Gtk.Button {
   }
   private readonly _audioCorrectPlayer: Gst.Element | null;
   private readonly _audioIncorrectPlayer: Gst.Element | null;
-  public _audioEnabled: boolean;
+  private readonly _correctIcon: Gtk.Image;
+  private readonly _incorrectIcon: Gtk.Image;
+  private _audioEnabled: boolean;
 
   constructor({ color, settings }: GameButtonParams) {
     super({
@@ -36,6 +38,15 @@ export default class GameButton extends Gtk.Button {
     settings.connect("changed", () => {
       this._audioEnabled = settings.get_boolean("audio-enabled");
     });
+
+    this._correctIcon = new Gtk.Image({
+      iconName: "dialog-ok-symbolic",
+      pixelSize: 48,
+    });
+    this._incorrectIcon = new Gtk.Image({
+      iconName: "process-stop",
+      pixelSize: 48,
+    });
   }
 
   public startFlash(status: GameButtonStatus): void {
@@ -45,15 +56,15 @@ export default class GameButton extends Gtk.Button {
 
     // depending on the type of flash, display the appropriate icon
     if (status === "flash-correct") {
-      this.set_icon_name("dialog-ok-symbolic");
+      this.set_child(this._correctIcon);
     } else if (status === "flash-incorrect") {
-      this.set_icon_name("process-stop");
+      this.set_child(this._incorrectIcon);
     }
   }
 
   public endFlash(): void {
     this.set_opacity(0.5);
-    this.set_icon_name("");
+    this.set_child(null);
   }
 
   private createAudioPlayer(audioFileName: string): Gst.Element | null {
