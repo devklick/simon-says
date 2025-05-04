@@ -15,6 +15,8 @@ import SettingsWindow from "../SettingsWindow/SettingsWindow";
 
 const APPLICATION_ID = "com.devklick.simon-says";
 
+// TODO: Game speed has been added to settings. Need to use this to determine sequence playback speed
+
 export default class Application extends Adw.Application {
   public readonly name = "Simon Says";
 
@@ -66,9 +68,7 @@ export default class Application extends Adw.Application {
       buttons: AllButtonColors.map((color) => new CoreGameButton({ color })),
     });
 
-    const openSettings = new Gio.SimpleAction({ name: "settings" });
-    openSettings.connect("activate", () => this.settingsWindow.present());
-    this.add_action(openSettings);
+    this.initActions();
   }
 
   static run(...args: Array<string>): number {
@@ -99,5 +99,10 @@ export default class Application extends Adw.Application {
       Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
     );
   }
-  
+
+  private initActions() {
+    const openSettings = new Gio.SimpleAction({ name: "settings" });
+    openSettings.connect("activate", () => this.settingsWindow.present());
+    this.add_action(openSettings);
+  }
 }
