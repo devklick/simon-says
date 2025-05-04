@@ -71,6 +71,10 @@ export default class Application extends Adw.Application {
     this.add_action(openSettings);
   }
 
+  static run(...args: Array<string>): number {
+    return new Application().run(args);
+  }
+
   override vfunc_activate(): void {
     super.vfunc_activate();
     this.initStyles();
@@ -95,4 +99,5 @@ export default class Application extends Adw.Application {
       Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
     );
   }
+  
 }
