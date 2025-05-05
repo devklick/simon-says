@@ -9,9 +9,9 @@ import { exit } from "@girs/gjs/system";
 import Window from "../Window";
 import CoreGame from "../../core/CoreGame";
 import CoreGameButton, { AllButtonColors } from "../../core/CoreGameButton";
+import SettingsWindow from "../SettingsWindow";
 
 import styles from "../../styles.css?inline";
-import SettingsWindow from "../SettingsWindow/SettingsWindow";
 
 const APPLICATION_ID = "com.devklick.simon-says";
 

@@ -79,31 +79,7 @@ export default class GameButton extends Gtk.Button {
     // Create an audio player to play the sound relevant to this scenario.
     const audioFileName = `${this._color}${correct ? "" : "-incorrect"}.mp3`;
     const player = this.createAudioPlayer(audioFileName);
-    if (!player) return;
-
-    const bus = player.get_bus();
-    if (!bus) return;
-
-    // Listen for signals coming from the player to perform cleanup actions
-    bus.add_signal_watch();
-    bus.connect("message", (_, message) => {
-      switch (message.type) {
-        // Playback has ended, so dispose of this player
-        case Gst.MessageType.EOS:
-          player.set_state(Gst.State.NULL);
-          player.unref();
-          break;
-
-        // Playback hit an error, log it and dispose
-        case Gst.MessageType.ERROR:
-          const [, err] = message.parse_error();
-          console.error("Playback error:", err);
-          player.set_state(Gst.State.NULL);
-          player.unref();
-          break;
-      }
-    });
     // Play the sound
-    player.set_state(Gst.State.PLAYING);
+    player?.set_state(Gst.State.PLAYING);
   }
 }
