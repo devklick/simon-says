@@ -15,8 +15,6 @@ import SettingsWindow from "../SettingsWindow/SettingsWindow";
 
 const APPLICATION_ID = "com.devklick.simon-says";
 
-// TODO: Game speed has been added to settings. Need to use this to determine sequence playback speed
-
 export default class Application extends Adw.Application {
   public readonly name = "Simon Says";
 
@@ -66,6 +64,10 @@ export default class Application extends Adw.Application {
 
     this.game = new CoreGame({
       buttons: AllButtonColors.map((color) => new CoreGameButton({ color })),
+      speed: this.appSettings.get_int("game-speed"),
+    });
+    this.appSettings.connect("changed", () => {
+      this.game.setSpeed(this.appSettings.get_int("game-speed"));
     });
 
     this.initActions();

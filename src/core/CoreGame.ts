@@ -10,6 +10,7 @@ export type GameStatus =
 
 interface CoreGameParams {
   buttons: ReadonlyArray<Readonly<CoreGameButton>>;
+  speed: number;
 }
 
 class Game {
@@ -53,8 +54,17 @@ class Game {
    */
   private _currentIndex: number = 0;
 
-  constructor({ buttons }: CoreGameParams) {
+  private _speed: number = 500;
+
+  private get _delay() {
+    // min speed is 100, max speed is 1000.
+    // flip this and use it as delay in MS
+    return 1100 - this._speed;
+  }
+
+  constructor({ buttons, speed }: CoreGameParams) {
     this.buttons = buttons;
+    this._speed = speed;
   }
 
   /**
@@ -68,6 +78,10 @@ class Game {
     this.score.value = 0;
     this.addButtonToSequence();
     this.emitSequence();
+  }
+
+  public setSpeed(value: number) {
+    this._speed = value;
   }
 
   /**
@@ -129,23 +143,33 @@ class Game {
     // Add a small delay to give a gap between the player
     // pressing a button and the game presenting the next sequence
     GLib.timeout_add(GLib.PRIORITY_DEFAULT, 800, () => {
-      // If we've not got through all buttons in the current sequence,
-      // play the one that's marked as current.
-      if (this._currentIndex < this._sequence.length) {
-        const buttonIndex = this._sequence[this._currentIndex];
-        this.buttons[buttonIndex].flash();
-        this._currentIndex += 1;
-        // Return true to continue repeating this timeout
-        return true;
+      const more = this.emitCurrent();
+      if (more) {
+        GLib.timeout_add(GLib.PRIORITY_DEFAULT, this._delay, () =>
+          this.emitCurrent()
+        );
       }
-
-      // We've played all colors in this sequence, so reset the counter
-      // and update the status to reflect that we're now waiting on user input.
-      this._currentIndex = 0;
-      this.status.value = "waiting-for-user";
-      // Return false to stop repeating the timeout
       return false;
     });
+  }
+
+  private emitCurrent() {
+    // If we've not got through all buttons in the current sequence,
+    // play the one that's marked as current.
+    if (this._currentIndex < this._sequence.length) {
+      const buttonIndex = this._sequence[this._currentIndex];
+      this.buttons[buttonIndex].flash("flash", this._delay / 2);
+      this._currentIndex += 1;
+      // Return true to continue repeating this timeout
+      return true;
+    }
+
+    // We've played all colors in this sequence, so reset the counter
+    // and update the status to reflect that we're now waiting on user input.
+    this._currentIndex = 0;
+    this.status.value = "waiting-for-user";
+    // Return false to stop repeating the timeout
+    return false;
   }
 
   /**

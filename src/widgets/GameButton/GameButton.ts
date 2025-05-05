@@ -15,10 +15,9 @@ export default class GameButton extends Gtk.Button {
   static {
     GObject.registerClass({ GTypeName: "GameButton" }, this);
   }
-  private readonly _audioCorrectPlayer: Gst.Element | null;
-  private readonly _audioIncorrectPlayer: Gst.Element | null;
   private readonly _correctIcon: Gtk.Image;
   private readonly _incorrectIcon: Gtk.Image;
+  private readonly _color: ButtonColor;
   private _audioEnabled: boolean;
 
   constructor({ color, settings }: GameButtonParams) {
@@ -29,10 +28,7 @@ export default class GameButton extends Gtk.Button {
       opacity: 0.5,
       name: `game-button-${color}`,
     });
-    this._audioCorrectPlayer = this.createAudioPlayer(`${color}.mp3`);
-    this._audioIncorrectPlayer = this.createAudioPlayer(
-      `${color}-incorrect.mp3`
-    );
+    this._color = color;
     this._audioEnabled = settings.get_boolean("audio-enabled");
 
     settings.connect("changed", () => {
@@ -73,19 +69,41 @@ export default class GameButton extends Gtk.Button {
       `resources/audio/${audioFileName}`,
     ]);
     const uri = `file://${audioPath}`;
-    const player = Gst.ElementFactory.make("playbin", `play-${audioFileName}`);
+    const player = Gst.ElementFactory.make("playbin", null);
     player?.set_property("uri", uri);
     return player;
   }
 
   private playAudio(correct: boolean) {
     if (!this._audioEnabled) return;
-    if (correct && this._audioCorrectPlayer) {
-      this._audioCorrectPlayer.set_state(Gst.State.NULL);
-      this._audioCorrectPlayer.set_state(Gst.State.PLAYING);
-    } else if (!correct && this._audioIncorrectPlayer) {
-      this._audioIncorrectPlayer.set_state(Gst.State.NULL);
-      this._audioIncorrectPlayer.set_state(Gst.State.PLAYING);
-    }
+    // Create an audio player to play the sound relevant to this scenario.
+    const audioFileName = `${this._color}${correct ? "" : "-incorrect"}.mp3`;
+    const player = this.createAudioPlayer(audioFileName);
+    if (!player) return;
+
+    const bus = player.get_bus();
+    if (!bus) return;
+
+    // Listen for signals coming from the player to perform cleanup actions
+    bus.add_signal_watch();
+    bus.connect("message", (_, message) => {
+      switch (message.type) {
+        // Playback has ended, so dispose of this player
+        case Gst.MessageType.EOS:
+          player.set_state(Gst.State.NULL);
+          player.unref();
+          break;
+
+        // Playback hit an error, log it and dispose
+        case Gst.MessageType.ERROR:
+          const [, err] = message.parse_error();
+          console.error("Playback error:", err);
+          player.set_state(Gst.State.NULL);
+          player.unref();
+          break;
+      }
+    });
+    // Play the sound
+    player.set_state(Gst.State.PLAYING);
   }
 }

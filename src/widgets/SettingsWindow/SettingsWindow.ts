@@ -3,6 +3,8 @@ import Gio from "@girs/gio-2.0";
 import Gtk from "@girs/gtk-4.0";
 import Application from "../Application";
 import GObject from "@girs/gobject-2.0";
+import GLib from "@girs/glib-2.0";
+import { debounce } from "../../utils/timing";
 
 interface SettingsWindowParams {
   application: Application;
@@ -27,15 +29,13 @@ export default class SettingsWindow extends Adw.PreferencesWindow {
     this.speedSlider = new Gtk.Scale({
       orientation: Gtk.Orientation.HORIZONTAL,
       adjustment: new Gtk.Adjustment({
-        lower: -100,
-        upper: 100,
+        lower: 100,
+        upper: 1000,
         stepIncrement: 1,
-        pageIncrement: 10,
-        value: 0,
+        value: 500,
       }),
       hexpand: true,
       valuePos: Gtk.PositionType.RIGHT,
-      widthRequest: 50,
     });
 
     const page = new Adw.PreferencesPage({ title: "General" });
@@ -67,10 +67,15 @@ export default class SettingsWindow extends Adw.PreferencesWindow {
     });
 
     this.speedSlider.set_value(this.settings.get_int("game-speed"));
-    this.speedSlider.connect("value-changed", () => {
-      console.log("Speed", this.settings.get_int("game-speed"));
-      this.settings.set_int("game-speed", this.speedSlider.get_value());
+
+    const debouncedSetSpeed = debounce(100, (value: number) => {
+      console.log(value);
+      this.settings.set_int("game-speed", value);
     });
+
+    this.speedSlider.connect("value-changed", (scale) =>
+      debouncedSetSpeed(Math.round(scale.get_value()))
+    );
   }
 
   vfunc_close_request(): boolean {
