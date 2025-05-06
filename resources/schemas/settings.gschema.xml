@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
-    <schema id="com.devklick.simon-says.settings" path="/com/devklick/simon-says/">
+    <schema id="io.github.devklick.simon-says.settings" path="/io/github/devklick/simon-says/">
         <key name="audio-enabled" type="b">
             <default>true</default>
             <summary>Enable Audio</summary>

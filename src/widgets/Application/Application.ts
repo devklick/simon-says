@@ -13,7 +13,7 @@ import SettingsWindow from "../SettingsWindow";
 
 import styles from "../../styles.css?inline";
 
-const APPLICATION_ID = "com.devklick.simon-says";
+const APPLICATION_ID = "io.github.devklick.simon-says";
 
 export default class Application extends Adw.Application {
   public readonly name = "Simon Says";
