@@ -1,0 +1,39 @@
+{
+    "$schema": "https://raw.githubusercontent.com/flatpak/flatpak-builder/main/data/flatpak-manifest.schema.json",
+    "id": "io.github.devklick.simon-says",
+    "runtime": "org.gnome.Platform",
+    "runtime-version": "47",
+    "sdk": "org.gnome.Sdk",
+    "command": "simon-says",
+    "finish-args": ["--socket=x11", "--socket=wayland", "--socket=pulseaudio"],
+    "modules": [
+        {
+            "name": "simon-says",
+            "buildsystem": "simple",
+            "sources": [
+                {
+                    "type": "dir",
+                    "path": "../dist"
+                },
+                {
+                    "type": "dir",
+                    "path": "../resources",
+                    "dest": "resources"
+                }
+            ],
+            "build-commands": [
+                "mkdir -p /app/share/simon-says",
+                "cp -vr * /app/share/simon-says/",
+                "mkdir -p /app/bin",
+                "echo '#!/bin/sh' > /app/bin/simon-says",
+                "echo 'exec /usr/bin/gjs -m /app/share/simon-says/main.js' >> /app/bin/simon-says",
+                "chmod +x /app/bin/simon-says",
+                "mkdir -p /app/share/applications",
+                "cp /app/share/simon-says/resources/io.github.devklick.simon-says.desktop /app/share/applications/",
+                "mkdir -p /app/share/glib-2.0/schemas",
+                "cp /app/share/simon-says/resources/schemas/io.github.devklick.simon-says.gschema.xml /app/share/glib-2.0/schemas/",
+                "glib-compile-schemas /app/share/glib-2.0/schemas"
+            ]
+        }
+    ]
+}

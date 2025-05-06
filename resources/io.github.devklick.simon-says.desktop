@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Simon Says
+Exec=simon-says
+Type=Application
+Icon=io.github.devklick.simon-says
+Categories=Game;
